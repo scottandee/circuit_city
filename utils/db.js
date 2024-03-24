@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+require('dotenv').config();
 
-const port = process.env.PORT || 27017;
-const db_name = process.env.DB || 'circuit_city';
-const host = process.env.HOST || 'localhost';
+const port = process.env.DBPORT;
+const db_name = process.env.DB;
+const host = process.env.HOST;
 
 class DBClient {
   constructor () {

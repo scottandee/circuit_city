@@ -1,0 +1,41 @@
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const User = require('../models/userModel');
+
+async function signUp(req, res) {
+  // Retreive all data in body of request
+  const {
+    email, password, firstName, lastName, role,
+  } = req.body;
+
+  if (!email || !password || !firstName || !lastName) {
+    res.status(400).json({ error: 'email, password, first and last names, required' });
+  }
+  // Check if email already exists
+  const user = await User.findOne({ email });
+  if (user) {
+    res.status(400).json({ error: 'Email already exists' });
+    return;
+  }
+  // Encrypt Password with bcrypt
+  const salt = process.env.SALT;
+  const hashedPwd = await bcrypt.hash(password, salt);
+  // Create new user
+  const newUser = new User({
+    email, firstName, lastName, role, password: hashedPwd,
+  });
+  newUser.save().then((savedDoc) => {
+    const savedDocObj = savedDoc.toObject();
+    savedDocObj.id = savedDocObj._id;
+    delete savedDocObj._id;
+    delete savedDocObj.password;
+    delete savedDocObj.__v;
+
+    res.status(201).json(savedDocObj);
+  }).catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: 'internal server error' });
+  });
+}
+
+module.exports = { signUp };
