@@ -14,6 +14,9 @@ async function verifyToken(req, res, next) {
     req.userId = decoded.id;
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+        res.status(401).json({ error: 'token is expired' });
+    }
     res.status(401).json({ error: 'invalid token' });
   }
 }
