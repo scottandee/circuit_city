@@ -1,8 +1,8 @@
-const dbClient = require("../utils/db");
+const dbClient = require('../utils/db');
 
-dbClient
+dbClient;
 function getStatus(req, res) {
-  res.status(200).json({db: dbClient.status(), status: 'Ready to go!'});
+  res.status(200).json({ db: dbClient.status(), status: 'Ready to go!' });
 }
 
 module.exports = { getStatus };
