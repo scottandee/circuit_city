@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 async function verifyToken(req, res, next) {
@@ -16,6 +17,7 @@ async function verifyToken(req, res, next) {
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
         res.status(401).json({ error: 'token is expired' });
+        return;
     }
     res.status(401).json({ error: 'invalid token' });
   }
