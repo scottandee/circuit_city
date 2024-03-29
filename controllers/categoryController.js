@@ -1,4 +1,5 @@
 const Category = require('../models/categoryModel');
+const { ObjectId } = require('mongodb')
 require('dotenv').config();
 
 async function getCategories(req, res) {
@@ -56,7 +57,7 @@ async function createCategory(req, res) {
     res.status(400).json({ error: "missing name or description" });
     return;
   }
-  if (Category.findOne({ name })) {
+  if (await Category.findOne({ name })) {
     res.status(400).json({ error: "name already exists" });
     return;
   }
@@ -75,4 +76,43 @@ async function createCategory(req, res) {
   });
 }
 
-module.exports = { getCategories, getCategory, createCategory };
+async function updateCategory(req, res) {
+  // const { name, description } = req.body;
+  // if (await Category.find({ name }).length > 1) {
+  //   res.status(400).json({ error: "name already exists" });
+  //   return;
+  // }
+  // const id = new ObjectId(req.userId);
+  // console.log(req.userId)
+  // const category = await Category.findOne({ _id: id });
+  // console.log(category)
+  // if (name) category.name = name;
+  // if (description != null) {
+  //   category.description = description;
+  // }
+
+  // category.save().then((saved) => {
+  //   const savedDocObj = saved.toObject();
+  //   savedDocObj.id = savedDocObj._id;
+  //   delete savedDocObj._id;
+  //   delete savedDocObj.__v;
+  //   res.status(201).json(savedDocObj);
+  // }).catch((err) => {
+  //   console.log(err);
+  //   res.status(500).json({ error: 'internal server error' });
+  // });
+}
+
+async function deleteCategory(req, res) {
+  await Category.deleteOne({ _id: new ObjectId(req.userId) });
+  res.status(200).json({success: 'deleted'});
+
+}
+
+module.exports = {
+  getCategories,
+  getCategory,
+  createCategory,
+  updateCategory,
+  deleteCategory,  
+};
