@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const port = process.env.DBPORT;
-const db_name = process.env.DB;
-const host = process.env.HOST;
-
+const username = process.env.DB_USERNAME;
+const password = process.env.DB_PASSWORD;
 class DBClient {
   constructor() {
-    mongoose.connect(`mongodb://${host}:${port}/${db_name}`);
+    mongoose.connect(`mongodb+srv://${username}:${password}@circuitcity.zbqar4u.mongodb.net/?retryWrites=true&w=majority&appName=CircuitCity`);
     this.client = mongoose.connection;
   }
 
