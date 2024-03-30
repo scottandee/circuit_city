@@ -34,7 +34,7 @@ const addressSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+}, { versionKey: false });
 
 const Address = mongoose.model('Address', addressSchema);
 module.exports = Address;

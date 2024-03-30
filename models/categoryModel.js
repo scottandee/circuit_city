@@ -16,7 +16,7 @@ const categorySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+}, { versionKey: false });
 
 const Category = mongoose.model('Category', categorySchema);
 module.exports = Category;

@@ -19,7 +19,7 @@ const cartSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+}, { versionKey: false });
 
 const Cart = mongoose.model('Cart', cartSchema);
 module.exports = Cart;
