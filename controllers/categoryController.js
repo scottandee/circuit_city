@@ -56,8 +56,8 @@ async function createCategory(req, res) {
   const { name, description } = req.body;
 
   // Body parameters validation
-  if (!name || !description) {
-    res.status(400).json({ error: 'missing name or description' });
+  if (!name) {
+    res.status(400).json({ error: 'missing name' });
     return;
   }
   if (await Category.findOne({ name })) {
@@ -86,7 +86,7 @@ async function updateCategory(req, res) {
   }
 
   // Update the db
-  await Category.updateOne({ _id: req.params.id }, { name, description })
+  await Category.updateOne({ _id: req.params.id }, { name, description, updatedAt: new Date() })
     .then((result) => {
       if (result.matchedCount === 0) {
         return res.status(404).json({ error: 'not found' });
