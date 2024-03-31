@@ -3,6 +3,7 @@ const qs = require('qs');
 const index = require('./routes/index');
 const user = require('./routes/user');
 const categories = require('./routes/categories');
+const products = require('./routes/products');
 require('dotenv').config();
 
 
@@ -14,8 +15,8 @@ app.set('query parser', function (str) {
   return qs.parse(str)
 });
 app.use('/', index);
-app.use('/api/v1/', user);
-app.use('/api/v1/', categories);
+app.use('/api/v1/', user, categories, products);
+// app.use('/api/v1/', categories);
 
 app.listen(port, () => {
   console.log('App is listening on port', port);
