@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 async function verifyToken(req, res, next) {
   const authHeader = req.get('Authorization');
+  if (!authHeader) return res.status(401).json({ error: 'unauthorized' });
 
   // Extract email and password from auth header
   const [scheme, token] = authHeader.split(' ');
