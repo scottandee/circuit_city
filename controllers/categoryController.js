@@ -1,4 +1,5 @@
 const Category = require('../models/categoryModel');
+const Product = require('../models/productModel');
 
 async function getCategories(req, res) {
   try {
@@ -27,7 +28,6 @@ async function getCategories(req, res) {
     }
 
     // get all products in each category
-
     res.status(200).json({
       count, prev, next, data: categories,
     });
@@ -39,11 +39,15 @@ async function getCategories(req, res) {
 
 async function getCategory(req, res) {
   const { id } = req.params;
+  // const products = await Product.find({ category: id });
+  // console.log(products);
   await Category.findOne({ _id: id })
     .then((category) => {
       if (!category) {
         return res.status(404).json({ error: 'not found' });
       }
+      // category = category.toObject();
+      // category.products = products;
       return res.status(200).json(category);
     })
     .catch((err) => {

@@ -52,7 +52,7 @@ async function getProduct(req, res) {
 }
 
 async function createProduct(req, res) {
-  const { name, description, price, category, images } = req.body;
+  const { name, description, price, category } = req.body;
   console.log(name);
 
   // Body parameters validation
@@ -65,20 +65,23 @@ async function createProduct(req, res) {
     return;
   }
 
-  const imageUrls = [];
+  const imageURLs = [];
+  const images = req.files;
+
   // Upload image to cloudinary
-  images.forEach(image => {
-    const url = uploadImage(image);
-    if (url) {
-      imageUrls.push(url);
+  for (const image of images) {
+    const url = await uploadImage(image.path);
+    if (url !== null) {
+      imageURLs.push(url);
     } else {
       res.status(500).json({ error: 'internal server error' });
+      return;
     }
-    
-  });
+  }
 
+  console.log(imageURLs)
   // Create a new product
-  await Product.create({ name, description, price, category, imageUrls })
+  await Product.create({ name, description, price, category, imageURLs })
     .then((product) => {
       res.status(201).json(product);
     }).catch((err) => {
@@ -87,4 +90,23 @@ async function createProduct(req, res) {
     });
 }
 
-module.exports = { getProducts, getProduct, createProduct };
+async function deleteProduct(req, res) {
+  await Product.deleteOne({ _id: req.params.id })
+    .then((result) => {
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'not found' });
+      }
+      return res.status(200).json({ success: 'deleted' });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ error: 'internal server error' });
+    });
+}
+
+module.exports = {
+  getProducts,
+  getProduct,
+  createProduct,
+  deleteProduct,
+};

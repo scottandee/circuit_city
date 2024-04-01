@@ -12,6 +12,7 @@ async function uploadImage(image) {
     return result.secure_url;
   } catch(err) {
     console.error(err);
+    return null;
   }
 }
 
