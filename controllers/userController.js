@@ -2,6 +2,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const Cart = require('../models/cartModel');
 
 async function signUp(req, res) {
   // Retreive all data in body of request
@@ -22,22 +23,25 @@ async function signUp(req, res) {
   // Encrypt Password with bcrypt
   const salt = process.env.SALT;
   const hashedPwd = await bcrypt.hash(password, salt);
-  // Create new user
-  const newUser = new User({
-    email, firstName, lastName, role, password: hashedPwd,
-  });
-  newUser.save().then((savedDoc) => {
-    const savedDocObj = savedDoc.toObject();
-    savedDocObj.id = savedDocObj._id;
-    delete savedDocObj._id;
-    delete savedDocObj.password;
-    delete savedDocObj.__v;
 
-    res.status(201).json(savedDocObj);
-  }).catch((err) => {
-    console.log(err);
-    res.status(500).json({ error: 'internal server error' });
-  });
+  // Create new user
+  await User.create({ email, firstName, lastName, role, password: hashedPwd })
+    .then((user) => {
+      req.user = user;
+      res.status(201).json(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: 'internal server error' });
+    });
+  
+  // Create a cart if role is user
+  if (req.user.role === 'user') {
+    await Cart.create({ user: req.user._id })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 async function logIn(req, res) {
@@ -79,10 +83,7 @@ async function logIn(req, res) {
 async function profile(req, res) {
   let user = await User.findOne({ _id: req.userId });
   user = user.toObject();
-  user.id = user._id;
-  delete user._id;
   delete user.password;
-  delete user.__v;
   res.status(200).json(user);
 }
 
