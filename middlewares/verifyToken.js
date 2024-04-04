@@ -8,8 +8,11 @@ async function verifyToken(req, res, next) {
   // Extract email and password from auth header
   const [scheme, token] = authHeader.split(' ');
 
+  // Extracted data validation
   if (scheme !== 'Bearer') return res.status(401).json({ error: 'unauthorized' });
   if (!token) return res.status(401).json({ error: 'unauthorized' });
+
+  // Verify token
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
     const decoded = jwt.verify(token, jwtSecretKey);
