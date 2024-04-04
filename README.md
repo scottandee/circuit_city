@@ -23,8 +23,9 @@ You can read the full API documentation at [link](https://documenter.getpostman.
 
 ### The Team
 * **Olayinkascott Andee**
-  * Role: Backend Developer
+  * Role: Developer
   * [Andee's LinkedIn](https://www.linkedin.com/in/olayinkascott-andee/)
+<br />
 
 ## 💻 Technologies Used
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -32,6 +33,7 @@ You can read the full API documentation at [link](https://documenter.getpostman.
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Heroku](https://img.shields.io/badge/heroku-%23430098.svg?style=for-the-badge&logo=heroku&logoColor=white)
+<br />
 
 ## Project Structure
 * `controllers`: These are functions that generate response to requests .
@@ -41,8 +43,16 @@ You can read the full API documentation at [link](https://documenter.getpostman.
 * `tests`: Unittests for functions.
 * `package.json`: This file contains the project's metadata.
 * `server.js`: This is the entry point into the application.
+<br />
 
 ## Installation
+**Prerequisites**
+- Create a Mongodb Atlas account at [link](https://www.mongodb.com/cloud/atlas/register). Afterwards, create a new database with the name `CircuitCity`
+- Create a cloudinary account at [link](https://cloudinary.com/)
+
+<br />
+
+**Installation Steps**
 1. Clone the Repository.
    ```bash
    git clone git@github.com:scottandee/circuit_city.git
@@ -51,4 +61,47 @@ You can read the full API documentation at [link](https://documenter.getpostman.
    ```bash
    npm install
    ```
-## This README is unfinished at the moment, please check back later 😉
+4. create a `.env` file and fill it with the data below:
+   ```bash
+   # Environment Variables
+   PORT=5000
+
+   # DB Config
+   DB_USERNAME='value'
+   DB_PASSWORD='value'
+
+   # Bcrypt salt
+   SALT=value
+
+   # JWT Secret Key
+   JWT_SECRET_KEY=secret key value
+
+   # Cloudinary
+   CLOUDINARY_CLOUD_NAME=''
+   CLOUDINARY_API_KEY=''
+   CLOUDINARY_API_SECRET=''
+   ```
+   **Note**: `value` is only a placeholder and should be substituted with the actual values. 
+<br />
+
+5. run `npm server.js`.
+<br />
+
+## Contributing
+Here are some steps to follow when contributing to this project:
+1. Fork the repository
+2. Clone the repository into your machine
+3. Install all dependencies with `npm install`
+5. Make your changes
+6. Write tests for your changes and make sure they pass
+7. Commit your changes
+8. Push your changes to your fork
+9. Create a pull request to the original repository
+<br />
+
+## Licensing
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+Copyright (c) 2024 Olayinkascott Andee.
+
+See the LICENSE file for more information.
