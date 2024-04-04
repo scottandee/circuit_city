@@ -48,6 +48,10 @@ async function signUp(req, res) {
 
 async function logIn(req, res) {
   const authHeader = req.get('Authorization');
+  if (!authHeader) {
+    res.status(401).json({ error: 'unauthorized' });
+    return;
+  }
 
   // Extract email and password from auth header
   const [scheme, base64] = authHeader.split(' ');
