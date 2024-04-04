@@ -1,14 +1,23 @@
 const express = require('express');
 const categoryController = require('../controllers/categoryController');
 const { adminCheck } = require('../middlewares/adminCheck');
-const { verifyToken } = require('../middlewares/auth');
+const { verifyToken } = require('../middlewares/verifyToken');
 
 const router = express.Router();
 
+// Retreive all categories from the DB
 router.get('/categories', verifyToken, categoryController.getCategories);
+
+// Retreieve category with specified id
 router.get('/categories/:id', verifyToken, categoryController.getCategory);
+
+// Create a new category
 router.post('/categories', verifyToken, adminCheck, categoryController.createCategory);
-router.put('/categories/:id', verifyToken, adminCheck, categoryController.updateCategory)
-router.delete('/categories/:id', verifyToken, adminCheck, categoryController.deleteCategory)
+
+// Update a category
+router.put('/categories/:id', verifyToken, adminCheck, categoryController.updateCategory);
+
+// Delete a category
+router.delete('/categories/:id', verifyToken, adminCheck, categoryController.deleteCategory);
 
 module.exports = router;
