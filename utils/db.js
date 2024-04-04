@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
+
 class DBClient {
   constructor() {
     mongoose.connect(`mongodb+srv://${username}:${password}@circuitcity.zbqar4u.mongodb.net/?retryWrites=true&w=majority&appName=CircuitCity`);
@@ -11,10 +12,6 @@ class DBClient {
 
   status() {
     return this.client.readyState;
-  }
-
-  client() {
-    return this.client();
   }
 }
 
