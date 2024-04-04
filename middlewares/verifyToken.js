@@ -20,10 +20,10 @@ async function verifyToken(req, res, next) {
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-        res.status(401).json({ error: 'token is expired' });
-        return;
+      res.status(401).json({ error: 'token is expired' });
+    } else {
+      res.status(401).json({ error: 'invalid token' });
     }
-    res.status(401).json({ error: 'invalid token' });
   }
 }
 
