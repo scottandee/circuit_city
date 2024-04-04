@@ -25,7 +25,9 @@ async function signUp(req, res) {
   const hashedPwd = await bcrypt.hash(password, salt);
 
   // Create new user
-  await User.create({ email, firstName, lastName, role, password: hashedPwd })
+  await User.create({
+    email, firstName, lastName, role, password: hashedPwd,
+  })
     .then((user) => {
       req.user = user;
       res.status(201).json(user);
@@ -34,7 +36,7 @@ async function signUp(req, res) {
       console.log(err);
       res.status(500).json({ error: 'internal server error' });
     });
-  
+
   // Create a cart if role is user
   if (req.user.role === 'user') {
     await Cart.create({ user: req.user._id })

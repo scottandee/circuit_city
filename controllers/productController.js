@@ -18,15 +18,15 @@ async function getProducts(req, res) {
     ];
     const products = await Product.aggregate(aggregationPipeline).exec();
     const count = await Product.countDocuments().exec();
-    
-        // Generate next and prev
+
+    // Generate next and prev
     if (curPage - 1 >= 1) {
       prev = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage - 1}`;
     }
     if (curPage * pageSize < count) {
       next = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage + 1}`;
     }
-    
+
     res.status(200).json({
       count, prev, next, data: products,
     });
@@ -52,7 +52,9 @@ async function getProduct(req, res) {
 }
 
 async function createProduct(req, res) {
-  const { name, description, price, category } = req.body;
+  const {
+    name, description, price, category,
+  } = req.body;
   console.log(name);
 
   // Body parameters validation
@@ -79,9 +81,11 @@ async function createProduct(req, res) {
     }
   }
 
-  console.log(imageURLs)
+  console.log(imageURLs);
   // Create a new product
-  await Product.create({ name, description, price, category, imageURLs })
+  await Product.create({
+    name, description, price, category, imageURLs,
+  })
     .then((product) => {
       res.status(201).json(product);
     }).catch((err) => {
