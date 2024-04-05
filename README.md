@@ -36,11 +36,11 @@ You can read the full API documentation at [link](https://documenter.getpostman.
 <br />
 
 ## Project Structure
-* `controllers`: These are functions that generate response to requests .
-* `middlewares`: These intercept requests before it gets to the controller.
-* `models`: Data declaration for each of the resources.
-* `routes`: These contains the available routes for each resource.
-* `tests`: Unittests for functions.
+* `/controllers`: These are functions that generate response to requests .
+* `/middlewares`: These intercept requests before it gets to the controller.
+* `/models`: Data declaration for each of the resources.
+* `/routes`: These contains the available routes for each resource.
+* `/tests`: Unittests for functions.
 * `package.json`: This file contains the project's metadata.
 * `server.js`: This is the entry point into the application.
 <br />
