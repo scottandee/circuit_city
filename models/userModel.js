@@ -23,11 +23,16 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  cartId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart',
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 }, { versionKey: false });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const Users = mongoose.model('Users', userSchema);
+module.exports = Users;

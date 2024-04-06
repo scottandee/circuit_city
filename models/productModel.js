@@ -12,7 +12,11 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  category: {
+  stock: {
+    type: Number,
+    required: true,
+  },
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
     required: true,
@@ -31,5 +35,5 @@ const productSchema = new mongoose.Schema({
   },
 }, { versionKey: false });
 
-const Product = mongoose.model('Product', productSchema);
-module.exports = Product;
+const Products = mongoose.model('Products', productSchema);
+module.exports = Products;
