@@ -1,5 +1,11 @@
 const Product = require('../models/productModel');
+const Categories = require('../models/categoryModel');
 const { uploadImage } = require('../utils/uploadImage');
+const {
+  selfUrlGenerator,
+  urlGenerator,
+  paginationUrlGen,
+} = require('../utils/urlGenerator');
 
 async function getProducts(req, res) {
   try {
@@ -21,14 +27,21 @@ async function getProducts(req, res) {
 
     // Generate next and prev
     if (curPage - 1 >= 1) {
-      prev = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage - 1}`;
+      prev = paginationUrlGen(req, curPage - 1);
     }
     if (curPage * pageSize < count) {
-      next = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage + 1}`;
+      next = paginationUrlGen(req, curPage + 1);;
+    }
+
+    // Generate product urls
+    for (product of products) {
+      product.category = urlGenerator(req, '/api/categories/', product.categoryId);
+      delete product.categoryId;
+      product.url = urlGenerator(req, '/api/products/', product._id);
     }
 
     res.status(200).json({
-      count, prev, next, data: products,
+      count, prev, next, data: products, url: selfUrlGenerator(req)
     });
   } catch (err) {
     console.log(err);
@@ -43,6 +56,12 @@ async function getProduct(req, res) {
       if (!product) {
         return res.status(404).json({ error: 'not found' });
       }
+      // Add Urls
+      product = product.toObject();
+      product.category = urlGenerator(req, '/api/categories/', product.categoryId);
+      delete product.categoryId;
+      product.url = selfUrlGenerator(req);
+
       return res.status(200).json(product);
     })
     .catch((err) => {
@@ -53,12 +72,11 @@ async function getProduct(req, res) {
 
 async function createProduct(req, res) {
   const {
-    name, description, price, category,
+    name, description, price, categoryId, stock,
   } = req.body;
-  console.log(name);
 
   // Body parameters validation
-  if (!name || !price || !category) {
+  if (!name || !price || !categoryId) {
     res.status(400).json({ error: 'missing name, price and or category' });
     return;
   }
@@ -66,13 +84,17 @@ async function createProduct(req, res) {
     res.status(400).json({ error: 'name already exists' });
     return;
   }
-
-  const imageURLs = [];
-  const images = req.files;
+  if (!await Categories.findOne({ _id: categoryId })) {
+    res.status(400).json({ error: 'category not found' });
+    return
+  }
 
   // Upload image to cloudinary
+  const imageURLs = [];
+  const images = req.files;
   for (const image of images) {
     const url = await uploadImage(image.path);
+    console.log(url)
     if (url !== null) {
       imageURLs.push(url);
     } else {
@@ -81,12 +103,15 @@ async function createProduct(req, res) {
     }
   }
 
-  console.log(imageURLs);
   // Create a new product
   await Product.create({
-    name, description, price, category, imageURLs,
+    name, description, price, categoryId, stock, imageURLs,
   })
     .then((product) => {
+      product = product.toObject();
+      product.category = urlGenerator(req, '/api/categories/', product.categoryId);
+      delete product.categoryId;
+      product.url = selfUrlGenerator(req);
       res.status(201).json(product);
     }).catch((err) => {
       console.log(err);
@@ -100,7 +125,7 @@ async function deleteProduct(req, res) {
       if (result.deletedCount === 0) {
         return res.status(404).json({ error: 'not found' });
       }
-      return res.status(200).json({ success: 'deleted' });
+      return res.status(200).json({ message: 'deleted' });
     })
     .catch((error) => {
       console.error(error);

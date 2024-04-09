@@ -1,5 +1,10 @@
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
+const {
+  selfUrlGenerator,
+  urlGenerator,
+  paginationUrlGen,
+} = require('../utils/urlGenerator');
 
 async function getCategories(req, res) {
   try {
@@ -21,15 +26,20 @@ async function getCategories(req, res) {
 
     // Generate next and prev
     if (curPage - 1 >= 1) {
-      prev = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage - 1}`;
+      prev = paginationUrlGen(req, curPage - 1);
     }
     if (curPage * pageSize < count) {
-      next = `http://${req.hostname}${req.baseUrl}${req.path}/?page=${curPage + 1}`;
+      next = paginationUrlGen(req, curPage + 1);;
+    }
+
+    // Generate product urls
+    for (c of categories) {
+      c.url = urlGenerator(req, '/api/categories/', c._id);
     }
 
     // get all products in each category
     res.status(200).json({
-      count, prev, next, data: categories,
+      count, prev, next, data: categories, url: selfUrlGenerator(req),
     });
   } catch (err) {
     console.log(err);
@@ -39,15 +49,11 @@ async function getCategories(req, res) {
 
 async function getCategory(req, res) {
   const { id } = req.params;
-  // const products = await Product.find({ category: id });
-  // console.log(products);
   await Category.findOne({ _id: id })
     .then((category) => {
       if (!category) {
         return res.status(404).json({ error: 'not found' });
       }
-      // category = category.toObject();
-      // category.products = products;
       return res.status(200).json(category);
     })
     .catch((err) => {

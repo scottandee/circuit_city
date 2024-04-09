@@ -18,7 +18,7 @@ app.use(express.json());
 app.set('query parser', (str) => qs.parse(str));
 
 // Routes
-app.use('/api/v1/', index, user, categories, products, cart);
+app.use('/api/', index, user, categories, products, cart);
 
 // Not Found Handler
 app.use((req, res) => {

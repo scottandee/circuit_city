@@ -1,8 +1,10 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
-const Cart = require('../models/cartModel');
+const Users = require('../models/userModel');
+const Carts = require('../models/cartModel');
+const { selfUrlGenerator, urlGenerator } = require('../utils/urlGenerator');
+
 
 async function signUp(req, res) {
   // Retreive all data in body of request
@@ -15,7 +17,7 @@ async function signUp(req, res) {
     return;
   }
   // Check if email already exists
-  const user = await User.findOne({ email });
+  const user = await Users.findOne({ email });
   if (user) {
     res.status(400).json({ error: 'Email already exists' });
     return;
@@ -24,8 +26,11 @@ async function signUp(req, res) {
   const salt = process.env.SALT;
   const hashedPwd = await bcrypt.hash(password, salt);
 
+  const cartId = null;
+  
+
   // Create new user
-  await User.create({
+  await Users.create({
     email, firstName, lastName, role, password: hashedPwd,
   })
     .then((user) => {
@@ -37,13 +42,11 @@ async function signUp(req, res) {
       res.status(500).json({ error: 'internal server error' });
     });
 
-  // Create a cart if role is user
-  if (req.user.role === 'user') {
-    await Cart.create({ user: req.user._id })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // Create new cart for user
+  await Carts.create({ userId: req.user._id })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 async function logIn(req, res) {
@@ -62,8 +65,9 @@ async function logIn(req, res) {
   const buff = Buffer.from(base64, 'base64');
   const string = buff.toString('ascii');
   const [email, hashedPwd] = string.split(':');
+
   // Check if user exists in db
-  const user = await User.findOne({ email });
+  const user = await Users.findOne({ email });
   if (!user) {
     res.status(404).json({ error: 'not found' });
     return;
@@ -87,9 +91,14 @@ async function logIn(req, res) {
 }
 
 async function profile(req, res) {
-  let user = await User.findOne({ _id: req.userId });
+  let user = await Users.findOne({ _id: req.userId });
+  const cart = await Carts.findOne({ userId: req.userId })
+
   user = user.toObject();
   delete user.password;
+  user.cart = urlGenerator(req, "/api/cart/", cart._id);
+  user.url = selfUrlGenerator(req);
+
   res.status(200).json(user);
 }
 

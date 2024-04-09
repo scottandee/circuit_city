@@ -11,10 +11,10 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 // Retreive all products from DB
-router.get('/products', verifyToken, productController.getProducts);
+router.get('/products', productController.getProducts);
 
 // Retreive a product with specified id
-router.get('/products/:id', verifyToken, productController.getProduct);
+router.get('/products/:id', productController.getProduct);
 
 // Create a new product
 router.post('/products', verifyToken, adminCheck, upload.array('images', 10), productController.createProduct);

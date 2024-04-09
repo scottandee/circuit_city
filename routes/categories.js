@@ -6,10 +6,10 @@ const { verifyToken } = require('../middlewares/verifyToken');
 const router = express.Router();
 
 // Retreive all categories from the DB
-router.get('/categories', verifyToken, categoryController.getCategories);
+router.get('/categories', categoryController.getCategories);
 
 // Retreieve category with specified id
-router.get('/categories/:id', verifyToken, categoryController.getCategory);
+router.get('/categories/:id', categoryController.getCategory);
 
 // Create a new category
 router.post('/categories', verifyToken, adminCheck, categoryController.createCategory);
