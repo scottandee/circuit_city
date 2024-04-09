@@ -23,11 +23,6 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-  cartId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cart',
-    required: true,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
