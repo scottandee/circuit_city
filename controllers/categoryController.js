@@ -1,5 +1,5 @@
 const Category = require('../models/categoryModel');
-const Product = require('../models/productModel');
+const Products = require('../models/productModel');
 const {
   selfUrlGenerator,
   urlGenerator,
@@ -29,12 +29,13 @@ async function getCategories(req, res) {
       prev = paginationUrlGen(req, curPage - 1);
     }
     if (curPage * pageSize < count) {
-      next = paginationUrlGen(req, curPage + 1);;
+      next = paginationUrlGen(req, curPage + 1);
     }
 
     // Generate product urls
-    for (c of categories) {
+    for (const c of categories) {
       c.url = urlGenerator(req, '/api/categories/', c._id);
+      c.products = `${c.url}/products`;
     }
 
     // get all products in each category

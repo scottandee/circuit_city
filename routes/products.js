@@ -16,6 +16,9 @@ router.get('/products', productController.getProducts);
 // Retreive a product with specified id
 router.get('/products/:id', productController.getProduct);
 
+// Retreive all products associated with a category
+router.get('/categories/:categoryId/products', productController.getProductsInCategory);
+
 // Create a new product
 router.post('/products', verifyToken, adminCheck, upload.array('images', 10), productController.createProduct);
 

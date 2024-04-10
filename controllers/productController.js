@@ -30,18 +30,18 @@ async function getProducts(req, res) {
       prev = paginationUrlGen(req, curPage - 1);
     }
     if (curPage * pageSize < count) {
-      next = paginationUrlGen(req, curPage + 1);;
+      next = paginationUrlGen(req, curPage + 1);
     }
 
     // Generate product urls
-    for (product of products) {
+    for (const product of products) {
       product.category = urlGenerator(req, '/api/categories/', product.categoryId);
       delete product.categoryId;
       product.url = urlGenerator(req, '/api/products/', product._id);
     }
 
     res.status(200).json({
-      count, prev, next, data: products, url: selfUrlGenerator(req)
+      count, prev, next, data: products, url: selfUrlGenerator(req),
     });
   } catch (err) {
     console.log(err);
@@ -57,12 +57,37 @@ async function getProduct(req, res) {
         return res.status(404).json({ error: 'not found' });
       }
       // Add Urls
-      product = product.toObject();
-      product.category = urlGenerator(req, '/api/categories/', product.categoryId);
-      delete product.categoryId;
-      product.url = selfUrlGenerator(req);
+      const p = product.toObject();
+      p.category = urlGenerator(req, '/api/categories/', p.categoryId);
+      delete p.categoryId;
+      p.url = selfUrlGenerator(req);
 
-      return res.status(200).json(product);
+      return res.status(200).json(p);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: 'internal server error' });
+    });
+}
+
+async function getProductsInCategory(req, res) {
+  const { categoryId } = req.params;
+  await Product.find({ categoryId })
+    .then((p) => {
+      if (!p) {
+        return res.status(404).json({ error: 'not found' });
+      }
+      const products = [];
+      // Add Urls
+      for (let product of p) {
+        product = product.toObject();
+        product.category = urlGenerator(req, '/api/categories/', product.categoryId);
+        delete product.categoryId;
+        product.url = urlGenerator(req, '/api/products/', product._id);
+        products.push(product);
+      }
+
+      return res.status(200).json(products);
     })
     .catch((err) => {
       console.log(err);
@@ -86,7 +111,7 @@ async function createProduct(req, res) {
   }
   if (!await Categories.findOne({ _id: categoryId })) {
     res.status(400).json({ error: 'category not found' });
-    return
+    return;
   }
 
   // Upload image to cloudinary
@@ -94,7 +119,7 @@ async function createProduct(req, res) {
   const images = req.files;
   for (const image of images) {
     const url = await uploadImage(image.path);
-    console.log(url)
+    console.log(url);
     if (url !== null) {
       imageURLs.push(url);
     } else {
@@ -108,11 +133,11 @@ async function createProduct(req, res) {
     name, description, price, categoryId, stock, imageURLs,
   })
     .then((product) => {
-      product = product.toObject();
-      product.category = urlGenerator(req, '/api/categories/', product.categoryId);
-      delete product.categoryId;
-      product.url = selfUrlGenerator(req);
-      res.status(201).json(product);
+      const p = product.toObject();
+      p.category = urlGenerator(req, '/api/categories/', product.categoryId);
+      delete p.categoryId;
+      p.url = selfUrlGenerator(req);
+      res.status(201).json(p);
     }).catch((err) => {
       console.log(err);
       res.status(500).json({ error: 'internal server error' });
@@ -136,6 +161,7 @@ async function deleteProduct(req, res) {
 module.exports = {
   getProducts,
   getProduct,
+  getProductsInCategory,
   createProduct,
   deleteProduct,
 };

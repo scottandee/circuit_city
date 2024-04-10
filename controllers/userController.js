@@ -5,7 +5,6 @@ const Users = require('../models/userModel');
 const Carts = require('../models/cartModel');
 const { selfUrlGenerator, urlGenerator } = require('../utils/urlGenerator');
 
-
 async function signUp(req, res) {
   // Retreive all data in body of request
   const {
@@ -27,7 +26,6 @@ async function signUp(req, res) {
   const hashedPwd = await bcrypt.hash(password, salt);
 
   const cartId = null;
-  
 
   // Create new user
   await Users.create({
@@ -92,11 +90,11 @@ async function logIn(req, res) {
 
 async function profile(req, res) {
   let user = await Users.findOne({ _id: req.userId });
-  const cart = await Carts.findOne({ userId: req.userId })
+  const cart = await Carts.findOne({ userId: req.userId });
 
   user = user.toObject();
   delete user.password;
-  user.cart = urlGenerator(req, "/api/cart/", cart._id);
+  user.cart = urlGenerator(req, '/api/carts/', cart._id);
   user.url = selfUrlGenerator(req);
 
   res.status(200).json(user);

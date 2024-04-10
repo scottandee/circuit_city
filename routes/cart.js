@@ -1,16 +1,20 @@
 const express = require('express');
 const cartController = require('../controllers/cartController');
 const { verifyToken } = require('../middlewares/verifyToken');
+const { isOwner } = require('../middlewares/isOwner')
 
 const router = express.Router();
 
-// Retreive a user's cart
-router.get('/cart/', verifyToken, cartController.getCart);
+// Retreive a cart
+router.get('/carts/:cartId', verifyToken, isOwner, cartController.getCart);
 
-// Add to a user's cart
-router.post('/cart/products/', verifyToken, cartController.addToCart);
+// Add to a cart
+router.post('/carts/:cartId/items/', verifyToken, isOwner, cartController.addToCart);
 
-// Delete a product from a user's cart
-router.delete('/cart/products/:productId', verifyToken, cartController.deleteFromCart);
+// Delete a product from a cart
+router.delete('/carts/:cartId/items/:itemId', verifyToken, isOwner, cartController.deleteFromCart);
+
+// Update the quantity of a product
+router.put('/carts/:cartId/items/:itemId', verifyToken, isOwner, cartController.deleteFromCart);
 
 module.exports = router;
